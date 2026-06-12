@@ -86,6 +86,27 @@
                 <canvas id="wpmChart"></canvas>
             </div>
 
+            <div class="history-panel">
+                <div class="history-header">
+                    <span class="history-title">// SECURE_ARCHIVE_LOGS</span>
+                    <button id="clear-history-btn" class="cyber-btn-mini">PURGE_DATA</button>
+                </div>
+                <div class="history-table-wrapper">
+                    <table class="history-table">
+                        <thead>
+                            <tr>
+                                <th>TIMESTAMP</th>
+                                <th>MODE</th>
+                                <th>VELOCITY</th>
+                                <th>ACCURACY</th>
+                            </tr>
+                        </thead>
+                        <tbody id="history-log-rows">
+                            </tbody>
+                    </table>
+                </div>
+            </div>
+
             <div class="control-section">
                 <button id="summary-restart-btn" class="cyber-btn variant">RUN_NEW_DIAGNOSTIC</button>
             </div>

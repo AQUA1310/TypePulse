@@ -412,3 +412,123 @@ body {
 body.light-theme .theme-toggle-btn::after {
     content: "🌙";
 }
+/* ==========================================================================
+   HISTORICAL LOG CONTAINER STYLING
+   ========================================================================== */
+.history-panel {
+    background: var(--panel-bg);
+    border: 1px solid rgba(255, 0, 127, 0.15);
+    border-radius: 8px;
+    padding: 15px 20px;
+    margin-bottom: 30px;
+    backdrop-filter: blur(8px);
+}
+
+.history-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    border-bottom: 1px solid rgba(255, 0, 127, 0.1);
+    padding-bottom: 8px;
+}
+
+.history-title {
+    color: var(--neon-magenta);
+    font-size: 0.8rem;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+.cyber-btn-mini {
+    background: transparent;
+    border: 1px solid var(--text-muted);
+    color: var(--text-muted);
+    font-family: inherit;
+    font-size: 0.7rem;
+    font-weight: bold;
+    padding: 4px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.cyber-btn-mini:hover {
+    border-color: var(--neon-magenta);
+    color: var(--neon-magenta);
+    box-shadow: 0 0 8px rgba(255, 0, 127, 0.2);
+}
+
+.history-table-wrapper {
+    max-height: 150px;
+    overflow-y: auto;
+}
+
+.history-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.8rem;
+    text-align: left;
+}
+
+.history-table th {
+    color: var(--text-muted);
+    padding: 8px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+.history-table td {
+    padding: 8px;
+    color: var(--text-primary);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+}
+
+.history-table tbody tr:hover {
+    background: rgba(0, 240, 255, 0.03);
+}
+
+/* Custom mini scrollbar for the history log box */
+.history-table-wrapper::-webkit-scrollbar {
+    width: 4px;
+}
+.history-table-wrapper::-webkit-scrollbar-thumb {
+    background: var(--text-muted);
+    border-radius: 2px;
+}
+.history-table-wrapper::-webkit-scrollbar-thumb:hover {
+    background: var(--neon-cyan);
+}
+/* ==========================================================================
+   HIGH SCORE EXTENSION AND BADGING SYSTEMS
+   ========================================================================== */
+.high-score-badge {
+    font-size: 0.75rem;
+    font-weight: bold;
+    color: var(--neon-amber);
+    background: rgba(255, 183, 0, 0.1);
+    border: 1px solid var(--neon-amber);
+    padding: 3px 8px;
+    border-radius: 4px;
+    letter-spacing: 1px;
+    text-shadow: 0 0 5px rgba(255, 183, 0, 0.3);
+}
+
+.new-high-score-alert {
+    display: inline-block;
+    font-size: 0.8rem;
+    font-weight: bold;
+    color: var(--bg-dark);
+    background: var(--neon-amber);
+    padding: 2px 6px;
+    border-radius: 3px;
+    margin-left: 10px;
+    letter-spacing: 1px;
+    animation: rapidBlink 1s infinite alternate;
+}
+
+@keyframes rapidBlink {
+    0% { opacity: 0.6; transform: scale(0.98); }
+    100% { opacity: 1; transform: scale(1.02); }
+}

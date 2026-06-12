@@ -7,6 +7,8 @@ const restartBtn = document.getElementById('restart-btn');
 const summaryRestartBtn = document.getElementById('summary-restart-btn');
 const customTimeInput = document.getElementById('custom-time-input');
 const themeToggleBtn = document.getElementById('theme-toggle-btn');
+const historyLogRows = document.getElementById('history-log-rows');
+const clearHistoryBtn = document.getElementById('clear-history-btn');
 
 // View Screen Element Selectors
 const typingTestView = document.getElementById('typing-test-view');
@@ -123,7 +125,7 @@ function displayWords() {
     }
 }
 
-// 1. Handle User Custom Time Changes (10 to 60 boundary lock)
+// Handle User Custom Time Changes (10 to 60 boundary lock)
 customTimeInput.addEventListener('change', (e) => {
     if (isTestRunning) {
         customTimeInput.value = timeLimit; // Reject mid-test tampering
@@ -144,7 +146,7 @@ customTimeInput.addEventListener('change', (e) => {
     resetTest();          
 });
 
-// 2. Start Countdown Timer
+// Start Countdown Timer
 function startTimer() {
     isTestRunning = true;
     customTimeInput.disabled = true; // Freeze selection settings box while user types
@@ -176,7 +178,7 @@ function startTimer() {
     }, 1000);
 }
 
-// 3. Live Metrics Processing
+// Live Metrics Processing
 function calculateMetrics() {
     const timeElapsed = timeLimit - timeLeft;
     if (timeElapsed <= 0) return;
@@ -192,31 +194,33 @@ function calculateMetrics() {
     accuracyDisplay.innerText = `${accuracy}%`;
 }
 
-// 4. Test Complete: Hide Typing Area and Render Summary Graph
+// Test Complete: Hide Typing Area and Render Summary Graph
 function endTest() {
     clearInterval(timerInterval);
     isTestRunning = false;
     hiddenInput.disabled = true;
+    customTimeInput.disabled = false; 
     
-    customTimeInput.disabled = false; // Unlock options box on results page
-    
-    // Re-enable engine selector toggles for post-test access
     document.getElementById('btn-text').disabled = false;
     document.getElementById('btn-code').disabled = false;
     document.getElementById('language-select').disabled = false;
 
-    // Fill score panel cards text
-    finalWpm.innerText = wpmDisplay.innerText;
-    finalAcc.innerText = accuracyDisplay.innerText;
+    const finalWpmVal = parseInt(wpmDisplay.innerText);
+    const finalAccVal = accuracyDisplay.innerText;
 
-    // Flip views using our utility classes
+    finalWpm.innerText = finalWpmVal;
+    finalAcc.innerText = finalAccVal;
+
     typingTestView.classList.add('hidden');
     scoreView.classList.remove('hidden');
+
+    // Save performance data to LocalStorage log records & high score processing
+    saveTestToHistory(finalWpmVal, finalAccVal);
 
     renderPerformanceGraph();
 }
 
-// 5. ChartJS Configuration Render Loop
+// ChartJS Configuration Render Loop
 function renderPerformanceGraph() {
     const ctx = document.getElementById('wpmChart').getContext('2d');
     
@@ -261,7 +265,7 @@ function renderPerformanceGraph() {
     });
 }
 
-// 6. Complete Clean Reset 
+// Complete Clean Reset 
 function resetTest() {
     clearInterval(timerInterval);
     timeLeft = timeLimit;
@@ -370,12 +374,14 @@ function init() {
     }
 
     displayWords();
-    
+    displayHistoryLogs();
+
     document.addEventListener('click', (event) => {
         // Prevent loss of input focus when interacting with config control nodes
         if (
             event.target !== customTimeInput && 
             event.target !== themeToggleBtn &&
+            event.target !== clearHistoryBtn &&
             event.target !== document.getElementById('language-select') &&
             !event.target.classList.contains('mode-btn')
         ) {
@@ -384,5 +390,83 @@ function init() {
     });
     hiddenInput.focus();
 }
+
+// ==========================================================================
+// LOCAL STORAGE HISTORY & HIGH SCORE MANAGEMENT ENGINE
+// ==========================================================================
+function saveTestToHistory(wpm, accuracy) {
+    const history = JSON.parse(localStorage.getItem('typepulse_history')) || [];
+    const currentHighScore = parseInt(localStorage.getItem('typepulse_highscore')) || 0;
+    let isNewRecord = false;
+
+    const numericAccuracy = parseInt(accuracy);
+
+    // High Score Filter: Only counts if Execution Accuracy satisfies >= 80%
+    if (wpm > currentHighScore && numericAccuracy >= 80) {
+        localStorage.setItem('typepulse_highscore', wpm);
+        isNewRecord = true;
+    }
+
+    const newEntry = {
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        mode: currentMode === 'code' ? `CODE [${currentLanguage.toUpperCase()}]` : 'TEXT',
+        wpm: wpm,
+        accuracy: accuracy,
+        isRecord: isNewRecord
+    };
+
+    history.unshift(newEntry); // Put latest score at the top
+    localStorage.setItem('typepulse_history', JSON.stringify(history));
+    displayHistoryLogs();
+}
+
+function displayHistoryLogs() {
+    const history = JSON.parse(localStorage.getItem('typepulse_history')) || [];
+    const highScore = localStorage.getItem('typepulse_highscore') || 0;
+    
+    // Inject/Update the High Score Badge within the header container element
+    const historyHeaderContainer = document.querySelector('.history-header');
+    if (historyHeaderContainer) {
+        let highBadge = document.getElementById('runtime-high-badge');
+        if (!highBadge) {
+            highBadge = document.createElement('span');
+            highBadge.id = 'runtime-high-badge';
+            highBadge.classList.add('high-score-badge');
+            historyHeaderContainer.insertBefore(highBadge, clearHistoryBtn);
+        }
+        highBadge.innerText = `APEX_RECORD: ${highScore} WPM`;
+    }
+
+    historyLogRows.innerHTML = '';
+
+    if (history.length === 0) {
+        historyLogRows.innerHTML = `<tr><td colspan="4" style="text-align:center; color:var(--text-muted);">NO_HISTORICAL_DATA_FOUND</td></tr>`;
+        return;
+    }
+
+    history.forEach(entry => {
+        const row = document.createElement('tr');
+        
+        // Render an animated flash banner flag tag if this specific row broke an elite speed ceiling
+        const recordTag = entry.isRecord ? `<span class="new-high-score-alert">CRITICAL_RECORD</span>` : '';
+
+        row.innerHTML = `
+            <td style="color: var(--text-muted);">${entry.timestamp}</td>
+            <td style="font-weight: bold;">${entry.mode}</td>
+            <td style="color: var(--neon-cyan); font-weight: bold;">${entry.wpm} WPM ${recordTag}</td>
+            <td style="color: var(--neon-magenta);">${entry.accuracy}</td>
+        `;
+        historyLogRows.appendChild(row);
+    });
+}
+
+// Clear History Button Handler (Resets entries and Apex Record benchmark values)
+clearHistoryBtn.addEventListener('click', () => {
+    if(confirm("PROCEED WITH TOTAL DATA PURGE? THIS WILL CLEAR THE ENTIRE HISTORICAL MATRIX AND APEX BENCHMARKS.")) {
+        localStorage.removeItem('typepulse_history');
+        localStorage.removeItem('typepulse_highscore');
+        displayHistoryLogs();
+    }
+});
 
 init();
