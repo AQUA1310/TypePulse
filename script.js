@@ -1,98 +1,173 @@
 const wordsContainer = document.getElementById('words-container');
 const hiddenInput = document.getElementById('hidden-input');
+const wpmDisplay = document.getElementById('wpm-display');
+const accuracyDisplay = document.getElementById('accuracy-display');
+const timerDisplay = document.getElementById('timer-display');
+const restartBtn = document.getElementById('restart-btn');
 
 let currentWords = [];
-let allLetters = []; // Flat list of all letter span elements for easy index tracking
-let letterIndex = 0; // Pointer to the letter the user should type next
+let allLetters = []; 
+let letterIndex = 0; 
 
-// 1. Grab random words from data.js
+// Dashboard State Variables
+const TIME_LIMIT = 30; // 30-second test length
+let timeLeft = TIME_LIMIT;
+let timerInterval = null;
+let isTestRunning = false;
+let totalTypedCharacters = 0;
+let structuralErrors = 0;
+
 function getRandomWords(amount = 25) {
     const shuffled = [...window.wordsPool].sort(() => 0.5 - Math.random());
     return shuffled.slice(0, amount);
 }
 
-// 2. Display words and build our flat letter array
 function displayWords() {
     wordsContainer.innerHTML = ''; 
     currentWords = getRandomWords();
-    allLetters = []; // Reset flat list
-    letterIndex = 0; // Reset pointer
+    allLetters = []; 
+    letterIndex = 0; 
 
     currentWords.forEach((word, wordIndex) => {
         const wordSpan = document.createElement('span');
         wordSpan.classList.add('word');
 
-        // Letters
         word.split('').forEach((letter) => {
             const letterSpan = document.createElement('span');
             letterSpan.classList.add('letter');
             letterSpan.innerText = letter;
             wordSpan.appendChild(letterSpan);
-            allLetters.push(letterSpan); // Collect it
+            allLetters.push(letterSpan); 
         });
 
-        // Space character (added to the end of every word except the last)
         if (wordIndex < currentWords.length - 1) {
             const spaceSpan = document.createElement('span');
             spaceSpan.classList.add('letter');
-            spaceSpan.innerText = ' '; // Explicit space
+            spaceSpan.innerText = ' '; 
             wordSpan.appendChild(spaceSpan);
-            allLetters.push(spaceSpan); // Collect it
+            allLetters.push(spaceSpan); 
         }
 
         wordsContainer.appendChild(wordSpan);
     });
 
-    // Highlight the very first letter
     if (allLetters.length > 0) {
         allLetters[0].classList.add('current');
     }
 }
 
-// 3. Handle Keyboard Inputs
-hiddenInput.addEventListener('input', (e) => {
+// 1. Start Timer Countdown
+function startTimer() {
+    isTestRunning = true;
+    timerInterval = setInterval(() => {
+        if (timeLeft > 0) {
+            timeLeft--;
+            timerDisplay.innerText = `${timeLeft}s`;
+            calculateMetrics();
+        } else {
+            endTest();
+        }
+    }, 1000);
+}
+
+// 2. Real-Time Math Metrics
+function calculateMetrics() {
+    const timeElapsed = TIME_LIMIT - timeLeft;
+    if (timeElapsed <= 0) return;
+
+    // Standard Typing Metric: 1 word = 5 characters typed
+    const grossWPM = Math.round((totalTypedCharacters / 5) / (timeElapsed / 60));
+    wpmDisplay.innerText = grossWPM > 0 ? grossWPM : 0;
+
+    // Accuracy Calculation
+    const correctCharacters = totalTypedCharacters - structuralErrors;
+    const accuracy = totalTypedCharacters > 0 
+        ? Math.round((correctCharacters / totalTypedCharacters) * 100) 
+        : 100;
+    
+    accuracyDisplay.innerText = `${accuracy < 0 ? 0 : accuracy}%`;
+}
+
+// 3. Stop Test / Game Over State
+function endTest() {
+    clearInterval(timerInterval);
+    hiddenInput.disabled = true; // Lock typing input
+    isTestRunning = false;
+    
+    // Remove blinking visual cursor from text area
+    if (allLetters[letterIndex]) {
+        allLetters[letterIndex].classList.remove('current');
+    }
+    
+    alert(`🎉 Test Completed!\nSpeed: ${wpmDisplay.innerText} WPM\nAccuracy: ${accuracyDisplay.innerText}`);
+}
+
+// 4. Full Factory Reset Control
+function resetTest() {
+    clearInterval(timerInterval);
+    timeLeft = TIME_LIMIT;
+    letterIndex = 0;
+    totalTypedCharacters = 0;
+    structuralErrors = 0;
+    isTestRunning = false;
+    hiddenInput.disabled = false;
+    hiddenInput.value = '';
+
+    // Reset Dashboard UI elements
+    timerDisplay.innerText = `${TIME_LIMIT}s`;
+    wpmDisplay.innerText = '0';
+    accuracyDisplay.innerText = '100%';
+
+    displayWords();
+    hiddenInput.focus();
+}
+
+// Main Keystroke Input Handler
+hiddenInput.addEventListener('input', () => {
+    // Start countdown on the very first character stroke
+    if (!isTestRunning && timeLeft === TIME_LIMIT && hiddenInput.value.length > 0) {
+        startTimer();
+    }
+
     const inputValue = hiddenInput.value;
     const currentExpectedLetter = allLetters[letterIndex];
 
-    // If the input value length matches our tracking index + 1, it's a new character typed
     if (inputValue.length > letterIndex) {
         const typedChar = inputValue[inputValue.length - 1];
-
-        // Highlight clean up
         currentExpectedLetter.classList.remove('current');
+
+        totalTypedCharacters++; // Track total actions for WPM calculation
 
         if (typedChar === currentExpectedLetter.innerText) {
             currentExpectedLetter.classList.add('correct');
         } else {
             currentExpectedLetter.classList.add('incorrect');
+            structuralErrors++; // Track total errors for Accuracy calculation
         }
 
-        // Advance pointer forward
         letterIndex++;
 
     } else if (inputValue.length < letterIndex) {
-        // BACKSPACE detected (input string shrunk)
+        // Backspace handling
         currentExpectedLetter.classList.remove('current');
-        
-        // Move pointer backward
         letterIndex--;
-        
-        // Clean up previous letter styles
         allLetters[letterIndex].classList.remove('correct', 'incorrect', 'current');
     }
 
-    // Move the active blinking cursor highlight to the new active letter
     if (letterIndex < allLetters.length) {
         allLetters[letterIndex].classList.add('current');
     } else {
-        // End of the text reached!
-        alert("You reached the end of the phrase!");
-        hiddenInput.value = "";
+        // Automatically fetch fresh batch of words if user finishes faster than 30s
+        hiddenInput.value = '';
         displayWords();
     }
+    
+    calculateMetrics(); // Refresh dashboard numbers on every character strike
 });
 
-// Initialize setup
+// Hook up reset button event listener
+restartBtn.addEventListener('click', resetTest);
+
 function init() {
     displayWords();
     document.addEventListener('click', () => hiddenInput.focus());
