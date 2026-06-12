@@ -10,7 +10,7 @@ A typing speed test application built with HTML, CSS, and JavaScript.
 - [x] Implement Dynamic word generation (JavaScript)
 - [x] Build key-tracking & real-time typing logic
 - [x] Add timer countdown and live WPM/Accuracy metrics
-- [ ] Implement local score tracking
+- [x] Implement local score tracking
 
 ## Tech Stack
 
