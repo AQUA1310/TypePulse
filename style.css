@@ -1,4 +1,6 @@
-/* Custom Cyber-Grid Theme Variables */
+/* ==========================================================================
+   THEME VARIABLES (DEFAULT DARK CYBER THEME)
+   ========================================================================== */
 :root {
     --bg-dark: #0a0b10;
     --panel-bg: rgba(20, 24, 35, 0.6);
@@ -7,13 +9,33 @@
     --neon-amber: #ffb700;
     --text-primary: #e2e8f0;
     --text-muted: #4e5d78;
+    --text-active-letter: #0a0b10; /* Dark text on bright neon active block */
+    --grid-color: rgba(18, 24, 38, 0.5);
 }
 
+/* ==========================================================================
+   NEW: VANILLA LIGHT CYBER THEME OVERRIDE
+   ========================================================================== */
+body.light-theme {
+    --bg-dark: #f4f7f6;
+    --panel-bg: rgba(255, 255, 255, 0.85);
+    --neon-cyan: #0066cc;       /* Darker, high-contrast crisp blue */
+    --neon-magenta: #cf0060;    /* High-contrast magenta for visibility */
+    --neon-amber: #c25e00;      /* Accessible amber contrast */
+    --text-primary: #1e293b;    /* High contrast dark slate text */
+    --text-muted: #708090;      /* Darker slate gray for legible un-typed words */
+    --text-active-letter: #ffffff; /* White text on deep blue active block */
+    --grid-color: transparent;  /* Seamless flat background */
+}
+
+/* ==========================================================================
+   GLOBAL DESIGN SYSTEMS & BODY LAYOUT
+   ========================================================================== */
 body {
     background-color: var(--bg-dark);
-    /* Subtle retro sci-fi grid overlay pattern background */
-    background-image: linear-gradient(rgba(18, 24, 38, 0.5) 1px, transparent 1px),
-                      linear-gradient(90deg, rgba(18, 24, 38, 0.5) 1px, transparent 1px);
+    /* Subtle retro sci-fi grid overlay pattern background using dynamic variable */
+    background-image: linear-gradient(var(--grid-color) 1px, transparent 1px),
+                      linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
     background-size: 30px 30px;
     color: var(--text-primary);
     font-family: 'Courier New', Courier, monospace;
@@ -24,6 +46,7 @@ body {
     align-items: center;
     height: 100vh;
     overflow: hidden;
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .app-wrapper {
@@ -56,10 +79,10 @@ body {
 
 .logo span {
     color: var(--neon-cyan);
-    text-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
+    text-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
 }
 
-/* Config Input */
+/* Config Input & Theme Toggle Button */
 .time-config {
     display: flex;
     align-items: center;
@@ -70,7 +93,7 @@ body {
 }
 
 #custom-time-input {
-    background: rgba(0, 0, 0, 0.4);
+    background: rgba(0, 0, 0, 0.05);
     border: 1px solid var(--text-muted);
     color: var(--neon-cyan);
     font-family: inherit;
@@ -87,6 +110,27 @@ body {
     outline: none;
     border-color: var(--neon-cyan);
     box-shadow: 0 0 8px rgba(0, 240, 255, 0.3);
+}
+
+/* Hides default up/down arrows from input box */
+#custom-time-input::-webkit-outer-spin-button,
+#custom-time-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.theme-toggle-btn {
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 0 5px;
+    margin-left: 5px;
+    transition: transform 0.2s ease;
+}
+
+.theme-toggle-btn:hover {
+    transform: scale(1.15);
 }
 
 /* Stats Layout Grid */
@@ -106,6 +150,7 @@ body {
     flex-direction: column-reverse;
     gap: 8px;
     backdrop-filter: blur(8px);
+    transition: background 0.3s ease, border-color 0.3s ease;
 }
 
 .stat-card.highlight {
@@ -123,27 +168,29 @@ body {
     color: var(--neon-cyan);
     font-size: 2.2rem;
     font-weight: bold;
-    text-shadow: 0 0 8px rgba(0, 240, 255, 0.2);
+    text-shadow: 0 0 8px rgba(0, 240, 255, 0.1);
+    transition: color 0.3s ease;
 }
 
 .stat-card.highlight .stat-value {
     color: var(--neon-magenta);
-    text-shadow: 0 0 8px rgba(255, 0, 127, 0.2);
+    text-shadow: 0 0 8px rgba(255, 0, 127, 0.1);
 }
 
 /* The Live Input Terminal Box Layout */
 .terminal-panel {
     background: var(--panel-bg);
     border: 1px solid rgba(0, 240, 255, 0.15);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
     border-radius: 8px;
     overflow: hidden;
     margin-bottom: 35px;
     backdrop-filter: blur(8px);
+    transition: background 0.3s ease, border-color 0.3s ease;
 }
 
 .terminal-header {
-    background: rgba(10, 11, 16, 0.8);
+    background: rgba(10, 11, 16, 0.2);
     padding: 10px 15px;
     display: flex;
     align-items: center;
@@ -172,11 +219,12 @@ body {
     padding: 25px;
     font-size: 1.4rem;
     line-height: 2.2rem;
-    color: #434c5e; /* Dim un-typed base text */
+    color: var(--text-muted); /* Leverages dynamic theme muted state */
     display: flex;
     flex-wrap: wrap;
     gap: 12px;
     user-select: none;
+    transition: color 0.3s ease;
 }
 
 /* Futuristic Letter States */
@@ -186,26 +234,26 @@ body {
 
 .letter.correct {
     color: var(--text-primary);
-    text-shadow: 0 0 5px rgba(255, 255, 255, 0.2);
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.1);
 }
 
 .letter.incorrect {
     color: var(--neon-magenta);
-    background: rgba(255, 0, 127, 0.15);
+    background: rgba(255, 0, 127, 0.12);
     border-radius: 2px;
 }
 
 .letter.current {
-    color: #fff;
-    background: rgba(0, 240, 255, 0.2);
+    color: var(--text-active-letter); /* Changes dynamically based on mode */
+    background: var(--neon-cyan);
     border-left: 2px solid var(--neon-cyan);
-    box-shadow: -4px 0 10px rgba(0, 240, 255, 0.4);
+    box-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
     animation: pulseGlow 1.5s infinite alternate;
 }
 
 @keyframes pulseGlow {
-    from { background: rgba(0, 240, 255, 0.1); }
-    to { background: rgba(0, 240, 255, 0.3); }
+    from { opacity: 0.85; }
+    to { opacity: 1; }
 }
 
 .hidden-input {
@@ -230,26 +278,26 @@ body {
     font-size: 0.9rem;
     border-radius: 4px;
     cursor: pointer;
-    box-shadow: 0 0 10px rgba(0, 240, 255, 0.1);
+    box-shadow: 0 0 10px rgba(0, 240, 255, 0.05);
     transition: all 0.2s ease;
 }
 
 .cyber-btn:hover {
     background: var(--neon-cyan);
     color: var(--bg-dark);
-    box-shadow: 0 0 20px rgba(0, 240, 255, 0.4);
+    box-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
 }
 
 .cyber-btn.variant {
     border-color: var(--neon-amber);
     color: var(--neon-amber);
-    box-shadow: 0 0 10px rgba(255, 183, 0, 0.1);
+    box-shadow: 0 0 10px rgba(255, 183, 0, 0.05);
 }
 
 .cyber-btn.variant:hover {
     background: var(--neon-amber);
     color: var(--bg-dark);
-    box-shadow: 0 0 20px rgba(255, 183, 0, 0.4);
+    box-shadow: 0 0 20px rgba(255, 183, 0, 0.3);
 }
 
 /* Score Summary View Override */
@@ -280,7 +328,8 @@ body {
     color: var(--neon-cyan);
     font-size: 3.5rem;
     font-weight: 900;
-    text-shadow: 0 0 15px rgba(0, 240, 255, 0.3);
+    text-shadow: 0 0 15px rgba(0, 240, 255, 0.1);
+    transition: color 0.3s ease;
 }
 
 .graph-container {
@@ -292,4 +341,18 @@ body {
     padding: 20px;
     margin-bottom: 40px;
     box-sizing: border-box;
+    transition: background 0.3s ease;
+}
+
+/* ==========================================================================
+   DYNAMIC CSS THEME TOGGLE ICONS (METHOD 1)
+   ========================================================================== */
+/* Default Dark Theme: Button shows Sun icon to trigger Light mode */
+.theme-toggle-btn::after {
+    content: "☀️";
+}
+
+/* Active Light Theme Override: Button switches to Moon icon */
+body.light-theme .theme-toggle-btn::after {
+    content: "🌙";
 }

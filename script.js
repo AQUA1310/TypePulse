@@ -6,6 +6,7 @@ const timerDisplay = document.getElementById('timer-display');
 const restartBtn = document.getElementById('restart-btn');
 const summaryRestartBtn = document.getElementById('summary-restart-btn');
 const customTimeInput = document.getElementById('custom-time-input');
+const themeToggleBtn = document.getElementById('theme-toggle-btn');
 
 // View Screen Element Selectors
 const typingTestView = document.getElementById('typing-test-view');
@@ -260,16 +261,41 @@ hiddenInput.addEventListener('input', () => {
     calculateMetrics(); 
 });
 
+// Theme Toggle Logic
+themeToggleBtn.addEventListener('click', () => {
+    document.body.classList.toggle('light-theme');
+    
+    // Save preference to LocalStorage (Icons are now dynamically rendered by CSS)
+    if (document.body.classList.contains('light-theme')) {
+        localStorage.setItem('theme', 'light');
+    } else {
+        localStorage.setItem('theme', 'dark');
+    }
+
+    // Force the chart gridlines to update colors if a chart is currently visible
+    if (myChartInstance && !scoreView.classList.contains('hidden')) {
+        renderPerformanceGraph();
+    }
+});
+
 restartBtn.addEventListener('click', resetTest);
 summaryRestartBtn.addEventListener('click', resetTest);
 
 function init() {
+    // Look up saved preference on initialization
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'light') {
+        document.body.classList.add('light-theme');
+    }
+
     displayWords();
+    
     document.addEventListener('click', (event) => {
-        if (event.target !== customTimeInput) {
+        if (event.target !== customTimeInput && event.target !== themeToggleBtn) {
             hiddenInput.focus();
         }
     });
     hiddenInput.focus();
 }
+
 init();
