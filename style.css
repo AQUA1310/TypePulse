@@ -1,0 +1,120 @@
+/* Resetting default margins and setting up colors */
+:root {
+    --bg-color: #323437;
+    --main-color: #e2b714;
+    --sub-color: #646669;
+    --text-color: #d1d0c5;
+    --error-color: #ca4754;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: 'Courier New', Courier, monospace;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.test-container {
+    max-width: 850px;
+    width: 100%;
+    padding: 20px;
+}
+
+header {
+    margin-bottom: 40px;
+}
+
+.logo {
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--main-color);
+}
+
+/* Stats Display */
+.stats-dashboard {
+    display: flex;
+    gap: 30px;
+    margin-bottom: 25px;
+}
+
+.stat-card {
+    display: flex;
+    flex-direction: column;
+}
+
+.stat-label {
+    color: var(--sub-color);
+    font-size: 0.9rem;
+}
+
+.stat-value {
+    color: var(--main-color);
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+/* Words Typing Area */
+.words-container {
+    font-size: 1.5rem;
+    line-height: 2.2rem;
+    color: var(--sub-color);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 40px;
+    user-select: none; /* Prevents user from selecting text */
+}
+
+/* Letter States */
+.letter {
+    transition: color 0.1s ease;
+}
+
+.letter.correct {
+    color: var(--text-color);
+}
+
+.letter.incorrect {
+    color: var(--error-color);
+    border-bottom: 2px solid var(--error-color);
+}
+
+.letter.current {
+    color: #fff;
+    border-left: 2px solid var(--main-color);
+    margin-left: -2px; /* Smooth adjustment for cursor */
+}
+
+/* Hide the input fully but keep it functional */
+.hidden-input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* Restart Button */
+.control-section {
+    text-align: center;
+}
+
+.restart-btn {
+    background-color: transparent;
+    border: 2px solid var(--sub-color);
+    color: var(--sub-color);
+    padding: 10px 24px;
+    font-size: 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.restart-btn:hover {
+    color: var(--bg-color);
+    background-color: var(--main-color);
+    border-color: var(--main-color);
+}
