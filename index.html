@@ -10,9 +10,22 @@
 
 <body>
 
-    <div class="test-container">
+    <div class="test-container" id="typing-test-view">
         <header>
             <div class="logo">TypePulse</div>
+            
+            <div class="time-config">
+                <label for="custom-time-input">time limit:</label>
+                <input 
+                    type="number" 
+                    id="custom-time-input" 
+                    value="30" 
+                    min="10" 
+                    max="60" 
+                    step="5"
+                >
+                <span class="seconds-label">seconds</span>
+            </div>
         </header>
 
         <div class="stats-dashboard">
@@ -30,16 +43,7 @@
             </div>
         </div>
 
-        <div class="words-container" id="words-container">
-            <span class="word"><span class="letter current">t</span><span class="letter">h</span><span
-                    class="letter">e</span></span>
-            <span class="word"><span class="letter">q</span><span class="letter">u</span><span
-                    class="letter">i</span><span class="letter">c</span><span class="letter">k</span></span>
-            <span class="word"><span class="letter">b</span><span class="letter">r</span><span
-                    class="letter">o</span><span class="letter">w</span><span class="letter">n</span></span>
-            <span class="word"><span class="letter">f</span><span class="letter">o</span><span
-                    class="letter">x</span></span>
-        </div>
+        <div class="words-container" id="words-container"></div>
 
         <input type="text" id="hidden-input" class="hidden-input" autofocus autocomplete="off" autocapitalize="off">
 
@@ -49,6 +53,33 @@
             </button>
         </div>
     </div>
+
+    <div class="test-container hidden" id="score-view">
+        <h1 class="results-header">Performance Summary</h1>
+        
+        <div class="final-stats">
+            <div class="final-stat-box">
+                <div class="lbl">Words Per Minute</div>
+                <div class="val" id="final-wpm">0</div>
+            </div>
+            <div class="final-stat-box">
+                <div class="lbl">Accuracy Percentage</div>
+                <div class="val" id="final-acc">100%</div>
+            </div>
+        </div>
+
+        <div class="graph-container">
+            <canvas id="wpmChart"></canvas>
+        </div>
+
+        <div class="control-section">
+            <button id="summary-restart-btn" class="restart-btn">
+                Take Another Test
+            </button>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="data.js"></script>
     <script src="script.js"></script>
 </body>

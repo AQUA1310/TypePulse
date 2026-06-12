@@ -27,12 +27,60 @@ body {
 
 header {
     margin-bottom: 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .logo {
     font-size: 2rem;
     font-weight: bold;
     color: var(--main-color);
+}
+
+/* Custom Time Input Styling (10s to 60s selector) */
+.time-config {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1rem;
+    color: var(--sub-color);
+}
+
+#custom-time-input {
+    background-color: rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--sub-color);
+    color: var(--main-color);
+    font-family: inherit;
+    font-size: 1rem;
+    font-weight: bold;
+    width: 55px;
+    padding: 4px 8px;
+    border-radius: 4px;
+    text-align: center;
+    transition: border-color 0.2s ease;
+}
+
+#custom-time-input:focus {
+    outline: none;
+    border-color: var(--main-color);
+}
+
+#custom-time-input:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    border-color: var(--sub-color);
+}
+
+/* Hides default up/down browser arrows from number input for a clean look */
+#custom-time-input::-webkit-outer-spin-button,
+#custom-time-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.seconds-label {
+    color: var(--sub-color);
 }
 
 /* Stats Display */
@@ -117,4 +165,48 @@ header {
     color: var(--bg-color);
     background-color: var(--main-color);
     border-color: var(--main-color);
+}
+
+/* ==========================================================================
+   NEW WORK: Results Scoreboard Page Layout & Chart Utility
+   ========================================================================== */
+
+/* Structural screen toggle utility */
+.hidden {
+    display: none !important;
+}
+
+.results-header {
+    color: var(--main-color);
+    text-align: left;
+    margin-bottom: 30px;
+}
+
+.final-stats {
+    display: flex;
+    gap: 50px;
+    margin-bottom: 40px;
+}
+
+.final-stat-box .lbl {
+    color: var(--sub-color);
+    font-size: 1rem;
+    margin-bottom: 5px;
+}
+
+.final-stat-box .val {
+    color: var(--main-color);
+    font-size: 3.5rem;
+    font-weight: bold;
+}
+
+/* Chart Canvas Wrapper */
+.graph-container {
+    width: 100%;
+    height: 250px; /* Locked explicit height for Chart.js rendering stability */
+    background-color: rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 40px;
+    box-sizing: border-box;
 }
