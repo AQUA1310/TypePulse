@@ -26,14 +26,67 @@ let isTestRunning = false;
 let totalTypedCharacters = 0;
 let structuralErrors = 0;
 
+// ==========================================================================
+// FEATURE ADDITION: MAIN ENGINE MODE & LANGUAGE TRACKING VARIABLE STATES
+// ==========================================================================
+let currentMode = 'text';          // Evaluates to: 'text' or 'code'
+let currentLanguage = 'javascript';  // Evaluates to: 'javascript', 'cpp', 'java'
+
 // Graph Arrays Data Stores
 let wpmHistoryData = [];
 let labelsTimelineData = [];
 let myChartInstance = null; // Stores Chart.js instance to prevent canvas glitches
 
+// ==========================================================================
+// UPGRADED DATAPOOL SEARCH ENGINE
+// ==========================================================================
 function getRandomWords(amount = 50) {
-    const shuffled = [...window.wordsPool].sort(() => 0.5 - Math.random());
-    return shuffled.slice(0, amount); // Pulled 50 words so fast typers don't run out
+    let selectedPool = [];
+
+    // Safe lookup verification chain mapping window data states
+    if (window.typingData) {
+        if (currentMode === 'text') {
+            selectedPool = window.typingData.text || [];
+        } else if (currentMode === 'code') {
+            const codePools = window.typingData.code || {};
+            selectedPool = codePools[currentLanguage] || codePools['javascript'] || [];
+        }
+    } else {
+        // Fallback safety catch statement pointing to standard old array structure
+        selectedPool = window.wordsPool || ["error", "data", "missing"];
+    }
+
+    const shuffled = [...selectedPool].sort(() => 0.5 - Math.random());
+    return shuffled.slice(0, amount); 
+}
+
+// ==========================================================================
+// CORE UI AND LOGIC STATE CONTROLLER SWITCHES
+// ==========================================================================
+function changeMainMode(mode) {
+    if (isTestRunning) return; // Prevent user layout breaking mid-run
+
+    currentMode = mode;
+
+    // Toggle interactive design classes for styling feedback
+    document.getElementById('btn-text').classList.toggle('active', mode === 'text');
+    document.getElementById('btn-code').classList.toggle('active', mode === 'code');
+
+    // Handle language dropdown visibility block matching mode select
+    const languageSelector = document.getElementById('language-select');
+    if (mode === 'code') {
+        languageSelector.style.display = 'inline-block';
+    } else {
+        languageSelector.style.display = 'none';
+    }
+
+    resetTest();
+}
+
+function changeLanguage(lang) {
+    if (isTestRunning) return; // Prevent shifting dataset mid-run
+    currentLanguage = lang;
+    resetTest();
 }
 
 function displayWords() {
@@ -95,6 +148,12 @@ customTimeInput.addEventListener('change', (e) => {
 function startTimer() {
     isTestRunning = true;
     customTimeInput.disabled = true; // Freeze selection settings box while user types
+    
+    // Freeze mode and dropdown controls during live runs
+    document.getElementById('btn-text').disabled = true;
+    document.getElementById('btn-code').disabled = true;
+    document.getElementById('language-select').disabled = true;
+
     wpmHistoryData = [];
     labelsTimelineData = [];
 
@@ -138,7 +197,13 @@ function endTest() {
     clearInterval(timerInterval);
     isTestRunning = false;
     hiddenInput.disabled = true;
+    
     customTimeInput.disabled = false; // Unlock options box on results page
+    
+    // Re-enable engine selector toggles for post-test access
+    document.getElementById('btn-text').disabled = false;
+    document.getElementById('btn-code').disabled = false;
+    document.getElementById('language-select').disabled = false;
 
     // Fill score panel cards text
     finalWpm.innerText = wpmDisplay.innerText;
@@ -205,7 +270,12 @@ function resetTest() {
     structuralErrors = 0;
     isTestRunning = false;
     hiddenInput.disabled = false;
+    
     customTimeInput.disabled = false;
+    document.getElementById('btn-text').disabled = false;
+    document.getElementById('btn-code').disabled = false;
+    document.getElementById('language-select').disabled = false;
+    
     hiddenInput.value = '';
 
     timerDisplay.innerText = `${timeLimit}s`;
@@ -220,37 +290,48 @@ function resetTest() {
     setTimeout(() => hiddenInput.focus(), 20); // Small timeout allows DOM to align focus correctly
 }
 
-// Core Keyboard Input Event Handler
+// Core Keyboard Input Event Handler (FIXED)
 hiddenInput.addEventListener('input', () => {
     if (!isTestRunning && timeLeft === timeLimit && hiddenInput.value.length > 0) {
         startTimer();
     }
 
     const inputValue = hiddenInput.value;
-    const currentExpectedLetter = allLetters[letterIndex];
+    const previousIndex = letterIndex; 
+    letterIndex = inputValue.length; // Absolute length mapping prevents array desync
 
-    if (inputValue.length > letterIndex) {
-        const typedChar = inputValue[inputValue.length - 1];
-        currentExpectedLetter.classList.remove('current');
+    // 1. Handling Forward Keypress Entry Processing
+    if (letterIndex > previousIndex) {
+        for (let i = previousIndex; i < letterIndex; i++) {
+            if (i >= allLetters.length) break;
 
-        totalTypedCharacters++; 
+            const typedChar = inputValue[i];
+            const expectedLetter = allLetters[i];
+            
+            expectedLetter.classList.remove('current');
+            totalTypedCharacters++; 
 
-        if (typedChar === currentExpectedLetter.innerText) {
-            currentExpectedLetter.classList.add('correct');
-        } else {
-            currentExpectedLetter.classList.add('incorrect');
-            structuralErrors++; 
+            if (typedChar === expectedLetter.innerText) {
+                expectedLetter.classList.add('correct');
+            } else {
+                expectedLetter.classList.add('incorrect');
+                structuralErrors++; 
+            }
         }
-
-        letterIndex++;
-
-    } else if (inputValue.length < letterIndex) {
-        // Backspace management
-        currentExpectedLetter.classList.remove('current');
-        letterIndex--;
-        allLetters[letterIndex].classList.remove('correct', 'incorrect', 'current');
+    } 
+    // 2. Handling Backspace Clear and Selection Removal Operations Safely
+    else if (letterIndex < previousIndex) {
+        if (previousIndex < allLetters.length) {
+            allLetters[previousIndex].classList.remove('current');
+        }
+        for (let i = letterIndex; i <= previousIndex; i++) {
+            if (i < allLetters.length) {
+                allLetters[i].classList.remove('correct', 'incorrect', 'current');
+            }
+        }
     }
 
+    // 3. Update Visual Tracker Elements Placement
     if (letterIndex < allLetters.length) {
         allLetters[letterIndex].classList.add('current');
     } else {
@@ -291,7 +372,13 @@ function init() {
     displayWords();
     
     document.addEventListener('click', (event) => {
-        if (event.target !== customTimeInput && event.target !== themeToggleBtn) {
+        // Prevent loss of input focus when interacting with config control nodes
+        if (
+            event.target !== customTimeInput && 
+            event.target !== themeToggleBtn &&
+            event.target !== document.getElementById('language-select') &&
+            !event.target.classList.contains('mode-btn')
+        ) {
             hiddenInput.focus();
         }
     });

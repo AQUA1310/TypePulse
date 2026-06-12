@@ -40,6 +40,17 @@
                 </div>
             </div>
 
+            <div class="terminal-controls">
+                <button class="mode-btn active" id="btn-text" onclick="changeMainMode('text')">TEXT_MODE</button>
+                <button class="mode-btn" id="btn-code" onclick="changeMainMode('code')">CODE_MODE</button>
+
+                <select id="language-select" onchange="changeLanguage(this.value)" style="display: none;">
+                    <option value="javascript">JavaScript</option>
+                    <option value="cpp">C++</option>
+                    <option value="java">Java</option>
+                </select>
+            </div>
+
             <div class="terminal-panel">
                 <div class="terminal-header">
                     <span class="terminal-dot red"></span>

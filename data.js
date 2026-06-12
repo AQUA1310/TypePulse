@@ -1,5 +1,6 @@
 // data.js
-window.wordsPool = [
+window.wordsPool = {
+    text:[
     "the", "be", "to", "of", "and", "a", "in", "that", "have", "i", "it", "for", "not", "on", "with", "he", "as", "you", "do", "at",
     "this", "but", "his", "by", "from", "they", "we", "say", "her", "she", "or", "an", "will", "my", "one", "all", "would", "there", "their", "what",
     "so", "up", "out", "if", "about", "who", "get", "which", "go", "me", "when", "make", "can", "like", "time", "no", "just", "him", "know", "take",
@@ -39,7 +40,61 @@ window.wordsPool = [
     "teenager", "adult", "elderly", "ancestor", "descendant", "family", "relative", "parent", "mother", "father", "sibling", "brother", "sister", "spouse", "husband", "wife", "child", "son", "daughter", "grandparent",
     "grandchild", "friend", "enemy", "ally", "rival", "competitor", "opponent", "partner", "colleague", "employee", "employer", "boss", "manager", "director", "executive", "president", "leader", "follower", "member", "citizen",
     "subject", "native", "foreigner", "immigrant", "emigrant", "refugee", "tourist", "visitor", "guest", "host", "customer", "client", "patient", "doctor", "nurse", "lawyer", "judge", "police", "soldier", "officer"
-];
+    ],
+    code: {
+        javascript: [
+            "const data = await fetch('/api/v1/status');",
+            "const unique = [...new Set(array)];",
+            "const active = items.filter(x => x.isActive);",
+            "setTimeout(() => { resolve(true); }, 1000);",
+            "Object.keys(config).forEach(key => delete config[key]);",
+            "const res = await Promise.all(queue.map(req => req()));",
+            "export default function init({ target, mode }) {",
+            "if (!response.ok) throw new Error('Network failure');",
+            "const payload = JSON.stringify({ id: Date.now(), ...body });",
+            "localStorage.setItem('user_session', JSON.stringify(token));",
+            "document.addEventListener('DOMContentLoaded', (e) => {",
+            "const element = document.querySelector('.terminal-panel');",
+            "return items.reduce((acc, current) => acc + current.value, 0);",
+            "try { const data = JSON.parse(raw); } catch (err) { return null; }",
+            "class Controller extends Component { constructor(props) { super(props); } }"
+        ],
+        cpp: [
+            "#include <iostream>",
+            "std::vector<std::string> words;",
+            "int main(int argc, char* argv[]) {",
+            "for (int i = 0; i < limit; ++i) {",
+            "std::cout << \"SYSTEM_LOAD_OK\" << std::endl;",
+            "auto ptr = std::make_unique<Node>();",
+            "template <typename T> class Matrix {",
+            "if (status != 200) { return EXIT_FAILURE; }",
+            "void update(float deltaTime) override {",
+            "unsigned int bitmask = 1 << 4;",
+            "std::sort(data.begin(), data.end());",
+            "const auto& [key, value] = current_pair;",
+            "throw std::runtime_error(\"Null pointer exception\");",
+            "typedef std::map<int, std::string> IdentityMap;",
+            "std::fstream file(\"config.json\", std::ios::in);"
+        ],
+        java: [
+            "public static void main(String[] args) {",
+            "List<String> list = new ArrayList<>();",
+            "System.out.println(\"// REBOOT_SYSTEM_INITIALIZED\");",
+            "Map<String, Object> map = new HashMap<>();",
+            "public class MainController implements Runnable {",
+            "@Override public void run() { synchronized(lock) {",
+            "Optional<User> user = userRepository.findById(id);",
+            "stream.filter(Objects::nonNull).forEach(System.out::println);",
+            "throw new IllegalArgumentException(\"Invalid runtime arguments\");",
+            "try (BufferedReader br = new BufferedReader(new FileReader(path))) {",
+            "private final ExecutorService executor = Executors.newFixedThreadPool(4);",
+            "String json = new ObjectMapper().writeValueAsString(payload);",
+            "CompletableFuture.runAsync(() -> processQueue()).thenAccept(v -> done());",
+            "public interface DataAccessObject<T> { T find(long id); }",
+            "boolean isActive = status.stream().anyMatch(s -> s.isLive());"
+        ]
+    }
+};
 
-// Share this pool with script.js globally
-window.wordsPool = wordsPool;
+// Map to window.typingData to match the lookups in your main script engine file smoothly
+window.typingData = window.wordsPool;
