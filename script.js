@@ -166,11 +166,11 @@ function renderPerformanceGraph() {
             datasets: [{
                 label: 'WPM',
                 data: wpmHistoryData,
-                borderColor: '#e2b714',
-                backgroundColor: 'rgba(226, 183, 20, 0.08)',
+                borderColor: '#00f0ff',
+                backgroundColor: 'rgba(0, 240, 255, 0.05)',
                 tension: 0.3,
                 fill: true,
-                pointBackgroundColor: '#e2b714',
+                pointBackgroundColor: '#ff007f',
                 pointRadius: wpmHistoryData.length > 30 ? 1 : 3 // Cleaner looking points on longer test limits
             }]
         },

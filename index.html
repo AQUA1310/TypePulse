@@ -4,79 +4,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TypePulse - Check Your Typing Speed</title>
+    <title>TypePulse // Cyber Speed Analytics</title>
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-    <div class="test-container" id="typing-test-view">
-        <header>
-            <div class="logo">TypePulse</div>
-            
-            <div class="time-config">
-                <label for="custom-time-input">time limit:</label>
-                <input 
-                    type="number" 
-                    id="custom-time-input" 
-                    value="30" 
-                    min="10" 
-                    max="60" 
-                    step="5"
-                >
-                <span class="seconds-label">seconds</span>
-            </div>
-        </header>
-
-        <div class="stats-dashboard">
-            <div class="stat-card">
-                <span class="stat-label">wpm</span>
-                <span class="stat-value" id="wpm-display">0</span>
-            </div>
-            <div class="stat-card">
-                <span class="stat-label">acc</span>
-                <span class="stat-value" id="accuracy-display">100%</span>
-            </div>
-            <div class="stat-card">
-                <span class="stat-label">time</span>
-                <span class="stat-value" id="timer-display">30s</span>
-            </div>
-        </div>
-
-        <div class="words-container" id="words-container"></div>
-
-        <input type="text" id="hidden-input" class="hidden-input" autofocus autocomplete="off" autocapitalize="off">
-
-        <div class="control-section">
-            <button id="restart-btn" class="restart-btn">
-                Restart Test
-            </button>
-        </div>
-    </div>
-
-    <div class="test-container hidden" id="score-view">
-        <h1 class="results-header">Performance Summary</h1>
+    <div class="app-wrapper">
         
-        <div class="final-stats">
-            <div class="final-stat-box">
-                <div class="lbl">Words Per Minute</div>
-                <div class="val" id="final-wpm">0</div>
+        <div class="test-container" id="typing-test-view">
+            <header class="cyber-header">
+                <div class="logo">TYPE<span>PULSE</span></div>
+                
+                <div class="time-config">
+                    <span class="config-label">SYSTEM_TIMER:</span>
+                    <input type="number" id="custom-time-input" value="30" min="10" max="60" step="5">
+                    <span class="seconds-label">SEC</span>
+                </div>
+            </header>
+
+            <div class="stats-dashboard">
+                <div class="stat-card">
+                    <span class="stat-value" id="wpm-display">0</span>
+                    <span class="stat-label">VELOCITY / WPM</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-value" id="accuracy-display">100%</span>
+                    <span class="stat-label">ACCURACY</span>
+                </div>
+                <div class="stat-card highlight">
+                    <span class="stat-value" id="timer-display">30s</span>
+                    <span class="stat-label">TIME_REMAINING</span>
+                </div>
             </div>
-            <div class="final-stat-box">
-                <div class="lbl">Accuracy Percentage</div>
-                <div class="val" id="final-acc">100%</div>
+
+            <div class="terminal-panel">
+                <div class="terminal-header">
+                    <span class="terminal-dot red"></span>
+                    <span class="terminal-dot yellow"></span>
+                    <span class="terminal-dot green"></span>
+                    <span class="terminal-title">live_input_feed.exe</span>
+                </div>
+                <div class="words-container" id="words-container"></div>
+            </div>
+
+            <input type="text" id="hidden-input" class="hidden-input" autofocus autocomplete="off" autocapitalize="off">
+
+            <div class="control-section">
+                <button id="restart-btn" class="cyber-btn">REBOOT SYSTEM</button>
             </div>
         </div>
 
-        <div class="graph-container">
-            <canvas id="wpmChart"></canvas>
+        <div class="test-container hidden" id="score-view">
+            <h1 class="results-header">// DIAGNOSTIC_REPORT_COMPLETE</h1>
+            
+            <div class="final-stats">
+                <div class="final-stat-box">
+                    <div class="lbl">FINAL_WPM_NET</div>
+                    <div class="val" id="final-wpm">0</div>
+                </div>
+                <div class="final-stat-box">
+                    <div class="lbl">ACCURACY_RATING</div>
+                    <div class="val" id="final-acc">100%</div>
+                </div>
+            </div>
+
+            <div class="graph-container">
+                <canvas id="wpmChart"></canvas>
+            </div>
+
+            <div class="control-section">
+                <button id="summary-restart-btn" class="cyber-btn variant">RUN_NEW_DIAGNOSTIC</button>
+            </div>
         </div>
 
-        <div class="control-section">
-            <button id="summary-restart-btn" class="restart-btn">
-                Take Another Test
-            </button>
-        </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
