@@ -39,13 +39,14 @@ body {
     color: var(--text-primary);
     font-family: 'Courier New', Courier, monospace;
     margin: 0;
-    padding: 0;
+    padding: 40px 0; /* Added breathing room at the top and bottom */
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
-    overflow: hidden;
+    min-height: 100vh; /* Changed from 'height: 100vh' to allow expanding */
+    overflow-y: auto;  /* Changed from 'hidden' to allow vertical scrolling when needed */
     transition: background-color 0.3s ease, color 0.3s ease;
+    box-sizing: border-box;
 }
 
 .app-wrapper {
